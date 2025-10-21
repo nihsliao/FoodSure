@@ -14,6 +14,12 @@
     <string name="delete_dialog_message">Are you sure you want to delete \"%s\"?</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="edit_form_name">Name</string>
+    <string name="edit_form_category">Category</string>
+    <string name="edit_form_expiration_date">Expired Date (Click to set)</string>
+    <string name="edit_form_quantity">Quantity (e.g. 2 bags)</string>
+    <string name="edit_form_storage">Storage Location (e.g. Fridge)</string>
+    <string name="edit_form_tag">Add to search tags (comma-separated)</string>
     <string name="button_save">SAVE</string>
     <string name="edit_tag_title">Edit Tag</string>
     <string name="add_tag_title">Add Tag</string>

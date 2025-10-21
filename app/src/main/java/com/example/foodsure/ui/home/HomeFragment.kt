@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodsure.R
@@ -28,7 +29,10 @@ class HomeFragment : BaseListFragment<FragmentHomeBinding, Map<String, String>, 
         })
     }
 
-    private fun navigateToEdit(id: Long, name: String) {}
+    private fun navigateToEdit(id: Long, name: String) {
+        val action = HomeFragmentDirections.actionAddFoodItem(id, name)
+        findNavController().navigate(action)
+    }
 
     override val listAdapter: ListAdapter<Map<String, String>, *> by lazy {
         FoodItemListAdapter({ item ->

@@ -2,12 +2,27 @@
     <string name="app_name">FoodSure</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">FoodSure</string>
+    <string name="nav_header_subtitle">Store it for sure</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tag">Tag</string>
+    <string name="fab_action">add</string>
+    <string name="add_food_item">Add Food Item</string>
+    <string name="delete_dialog_message">Are you sure you want to delete \"%s\"?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit_form_name">Name</string>
+    <string name="edit_form_category">Category</string>
+    <string name="edit_form_expiration_date">Expired Date (Click to set)</string>
+    <string name="edit_form_quantity">Quantity (e.g. 2 bags)</string>
+    <string name="edit_form_storage">Storage Location (e.g. Fridge)</string>
+    <string name="edit_form_tag">Add to search tags (comma-separated)</string>
+    <string name="button_save">SAVE</string>
+    <string name="edit_tag_title">Edit Tag</string>
+    <string name="add_tag_title">Add Tag</string>
+    <string name="expires_on">Expires on: %1$s</string>
+    <string name="search">Search</string>
 </resources>

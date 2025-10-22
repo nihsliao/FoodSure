@@ -1,4 +1,4 @@
-package com.example.foodsure.ui.home
+package com.example.foodsure.ui.tag
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,14 +7,18 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import com.example.foodsure.data.FoodRepository
 
-class HomeViewModel : ViewModel() {
+class TagViewModel : ViewModel() {
     private val searchQuery = MutableLiveData<String>("")
-    val foodList: LiveData<List<Map<String, String>>> = searchQuery.switchMap { query ->
-        FoodRepository.searchItem(query).asLiveData()
+    val tagList: LiveData<List<String>> = searchQuery.switchMap { query ->
+        FoodRepository.searchTag(query).asLiveData()
     }
 
-    fun removeItem(item: Map<String, String>) {
-        FoodRepository.removeItem(item)
+    fun saveTag(oldTag: String, newTag: String) {
+        FoodRepository.editTag(oldTag, newTag)
+    }
+
+    fun deleteTag(tag: String) {
+        FoodRepository.deleteTag(tag)
     }
 
     fun search(query: String) {

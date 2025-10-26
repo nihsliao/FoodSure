@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodsure.R
-import com.example.foodsure.data.FoodItemKeys
+import com.example.foodsure.data.FoodItemWithTags
 import com.example.foodsure.databinding.FoodListItemBinding
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class FoodItemListAdapter(
-    private val onItemClicked: (Map<String, String>) -> Unit
-) : ListAdapter<Map<String, String>, FoodItemListAdapter.FoodItemViewHolder>(FoodItemDiffCallback) {
+    private val onItemClicked: (FoodItemWithTags) -> Unit
+) : ListAdapter<FoodItemWithTags, FoodItemListAdapter.FoodItemViewHolder>(FoodItemDiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodItemViewHolder {
         val binding =
             FoodListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -33,36 +35,35 @@ class FoodItemListAdapter(
         RecyclerView.ViewHolder(binding.root) {
         companion object
 
-        fun bind(item: Map<String, String>) {
-            binding.name.text = item[FoodItemKeys.NAME]
-            binding.category.text = item[FoodItemKeys.CATEGORY]
+        fun bind(item: FoodItemWithTags) {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+            val foodItem = item.foodItem
+            binding.name.text = foodItem.name
+            binding.category.text = foodItem.category
             binding.expiredDate.text = itemView.context.getString(
                 R.string.expires_on,
-                item[FoodItemKeys.EXPIRED]
+                dateFormat.format(foodItem.expiration)
             )
-            binding.quantity.text = item[FoodItemKeys.QUANTITY]
-            binding.storageLocation.text = item[FoodItemKeys.STORAGE]
-            binding.tags.text = item[FoodItemKeys.TAGS]
+            binding.quantity.text = foodItem.quantity.toString()
+            binding.storageLocation.text = foodItem.storage
+            binding.tags.text = item.tags.joinToString(", ") { tag -> tag.name }
         }
     }
 
-    object FoodItemDiffCallback : DiffUtil.ItemCallback<Map<String, String>>() {
+    object FoodItemDiffCallback : DiffUtil.ItemCallback<FoodItemWithTags>() {
         override fun areItemsTheSame(
-            oldItem: Map<String, String>,
-            newItem: Map<String, String>
+            oldItem: FoodItemWithTags,
+            newItem: FoodItemWithTags
         ): Boolean {
-            return oldItem[FoodItemKeys.ID] == newItem[FoodItemKeys.ID]
+            return oldItem.foodItem.id == newItem.foodItem.id
         }
 
         override fun areContentsTheSame(
-            oldItem: Map<String, String>,
-            newItem: Map<String, String>
+            oldItem: FoodItemWithTags,
+            newItem: FoodItemWithTags
         ): Boolean {
-            if (oldItem.size != newItem.size) return false
-            for (item in oldItem) {
-                if (newItem[item.key] != item.value) return false
-            }
-            return true
+            return oldItem == newItem
         }
     }
 }

@@ -2,19 +2,24 @@ package com.example.foodsure.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodsure.R
-import com.example.foodsure.data.FoodItemKeys
+import com.example.foodsure.data.FoodItemWithTags
 import com.example.foodsure.databinding.FragmentHomeBinding
 import com.example.foodsure.ui.BaseListFragment
+import com.example.foodsure.ui.BaseViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class HomeFragment : BaseListFragment<FragmentHomeBinding, Map<String, String>, HomeViewModel>() {
-    override val viewModel: HomeViewModel by viewModels()
+class HomeFragment : BaseListFragment<FragmentHomeBinding, FoodItemWithTags, HomeViewModel>() {
+    override val viewModel: HomeViewModel by activityViewModels {
+        BaseViewModel.provideFactory(repository, {
+            HomeViewModel(repository)
+        })
+    }
 
     override fun inflateBinding(
         inflater: LayoutInflater,
@@ -34,25 +39,25 @@ class HomeFragment : BaseListFragment<FragmentHomeBinding, Map<String, String>, 
         findNavController().navigate(action)
     }
 
-    override val listAdapter: ListAdapter<Map<String, String>, *> by lazy {
+    override val listAdapter: ListAdapter<FoodItemWithTags, *> by lazy {
         FoodItemListAdapter({ item ->
             navigateToEdit(
-                item[FoodItemKeys.ID]?.toLong() as Long,
-                item[FoodItemKeys.NAME] as String
+                item.foodItem.id,
+                item.foodItem.name
             )
         })
     }
     override val recyclerView: RecyclerView
         get() = binding.itemRecycleView
-    override val listData: LiveData<out List<Map<String, String>>>
+    override val listData: LiveData<out List<FoodItemWithTags>>
         get() = viewModel.foodList
 
     override fun showDeletionDialog(
         position: Int,
-        item: Map<String, String>
+        item: FoodItemWithTags
     ) {
         MaterialAlertDialogBuilder(requireContext())
-            .setMessage(getString(R.string.delete_dialog_message, item[FoodItemKeys.NAME]))
+            .setMessage(getString(R.string.delete_dialog_message, item.foodItem.name))
             .setNegativeButton(getString(R.string.cancel)) { dialog, which ->
                 listAdapter.notifyItemChanged(position)
                 dialog.dismiss()

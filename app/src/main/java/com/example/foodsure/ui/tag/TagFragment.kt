@@ -3,25 +3,32 @@ package com.example.foodsure.ui.tag
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodsure.R
+import com.example.foodsure.data.FoodTag
 import com.example.foodsure.databinding.FragmentTagBinding
 import com.example.foodsure.ui.BaseListFragment
+import com.example.foodsure.ui.BaseViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class TagFragment : BaseListFragment<FragmentTagBinding, String, TagViewModel>() {
-    override val viewModel: TagViewModel by viewModels()
-    override val listAdapter: ListAdapter<String, *> by lazy {
+class TagFragment : BaseListFragment<FragmentTagBinding, FoodTag, TagViewModel>() {
+    override val viewModel: TagViewModel by activityViewModels {
+        BaseViewModel.provideFactory(repository, {
+            TagViewModel(repository)
+        })
+    }
+
+    override val listAdapter: ListAdapter<FoodTag, *> by lazy {
         TagListAdapter({
-            showEditTagDialog(getString(R.string.edit_tag_title), it)
+            showEditTagDialog(getString(R.string.edit_tag_title), it.name)
         })
     }
     override val recyclerView: RecyclerView
         get() = binding.tagRecycleView
-    override val listData: LiveData<out List<String>>
+    override val listData: LiveData<out List<FoodTag>>
         get() = viewModel.tagList
 
     override fun inflateBinding(
@@ -39,10 +46,10 @@ class TagFragment : BaseListFragment<FragmentTagBinding, String, TagViewModel>()
 
     override fun showDeletionDialog(
         position: Int,
-        item: String
+        item: FoodTag
     ) {
         MaterialAlertDialogBuilder(requireContext())
-            .setMessage(getString(R.string.delete_dialog_message, item))
+            .setMessage(getString(R.string.delete_dialog_message, item.name))
             .setPositiveButton(R.string.delete) { _, _ ->
                 viewModel.deleteTag(item)
             }

@@ -5,11 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.foodsure.data.FoodTag
 import com.example.foodsure.databinding.TagListItemBinding
 
 class TagListAdapter(
-    private val onItemClicked: (String) -> Unit
-) : ListAdapter<String, TagListAdapter.TagViewHolder>(TagDiffCallback) {
+    private val onItemClicked: (FoodTag) -> Unit
+) : ListAdapter<FoodTag, TagListAdapter.TagViewHolder>(TagDiffCallback) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -30,22 +31,22 @@ class TagListAdapter(
     }
 
     class TagViewHolder(val binding: TagListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(current: String) {
-            binding.tagItemName.text = current
+        fun bind(current: FoodTag) {
+            binding.tagItemName.text = current.name
         }
     }
 
-    object TagDiffCallback : DiffUtil.ItemCallback<String>() {
+    object TagDiffCallback : DiffUtil.ItemCallback<FoodTag>() {
         override fun areItemsTheSame(
-            oldItem: String,
-            newItem: String
+            oldItem: FoodTag,
+            newItem: FoodTag
         ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: String,
-            newItem: String
+            oldItem: FoodTag,
+            newItem: FoodTag
         ): Boolean {
             return oldItem == newItem
         }

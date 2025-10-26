@@ -2,77 +2,100 @@ package com.example.foodsure.ui.foodeditform
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import com.example.foodsure.data.FoodItemKeys
-import com.example.foodsure.data.FoodRepository
-import com.google.android.material.datepicker.MaterialDatePicker
+import androidx.lifecycle.viewModelScope
+import com.example.foodsure.data.FoodItem
+import com.example.foodsure.data.FoodItemWithTags
+import com.example.foodsure.data.ModelRepository
+import com.example.foodsure.ui.BaseViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class FoodEditFormViewModel : ViewModel() {
-    private companion object
-
+class FoodEditFormViewModel(r: ModelRepository) : BaseViewModel(r) {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     private val _navigateToHome = MutableLiveData<Boolean>()
     val navigateToHome: LiveData<Boolean> = _navigateToHome
 
     private val _expirationDate = MutableLiveData<Date>()
-    val expirationDateLong: Long
-        get() = _expirationDate.value?.time ?: MaterialDatePicker.todayInUtcMilliseconds()
+    val expirationDate: LiveData<Date> = _expirationDate
     val expirationDateString: LiveData<String> = _expirationDate.map {
         dateFormat.format(it)
     }
 
-    private val _foodItem = MutableLiveData<Map<String, String>>()
-    val foodItem: LiveData<Map<String, String>> = _foodItem
+    private val _toastMsg = MutableLiveData<String>("")
+    val toastMsg: LiveData<String> = _toastMsg
+
+    private val _foodItem by lazy { MutableLiveData<FoodItemWithTags>() }
+    val foodItem: LiveData<FoodItemWithTags> = _foodItem
 
     fun setExpirationDate(date: Date) {
         _expirationDate.value = date
     }
 
+    fun setToast(string: String) {
+        _toastMsg.value = string
+    }
 
     fun onDoneNavigation() {
         _navigateToHome.value = false
+        _foodItem.value = null
     }
 
     fun getTags(): LiveData<List<String>> {
-        return FoodRepository.getTags()
+        return repository.getAllTagsName().asLiveData()
     }
 
-    fun loadFoodItem(id: String) {
-        val item = FoodRepository.getItem(id)
+    fun loadFoodItem(id: Long) = viewModelScope.launch {
+        val item = repository.getItem(id)
         if (item == null) {
             _navigateToHome.value = true
-            return
+            return@launch
         }
         _foodItem.value = item
-
-        item[FoodItemKeys.EXPIRED]?.let { _expirationDate.value = dateFormat.parse(it) }
+        _expirationDate.value = item.foodItem.expiration
     }
 
     fun saveFoodItem(
+        id: Long?,
         name: String,
         category: String,
-        quantity: String,
+        expiration: Date,
+        quantity: Double,
         storage: String,
-        tags: String
+        tags: List<String>
     ) {
-        val currentId = _foodItem.value?.get(FoodItemKeys.ID)
+        if (name.isBlank() || category.isBlank() || quantity <= 0 || storage.isBlank()) {
+            _toastMsg.value = "Name, Category, Quantity and Storage are required fields."
+            return
+        }
 
-        val newFoodItem = mapOf(
-            FoodItemKeys.ID to (currentId ?: System.currentTimeMillis().toString()),
-            FoodItemKeys.NAME to name,
-            FoodItemKeys.CATEGORY to category,
-            FoodItemKeys.EXPIRED to dateFormat.format(_expirationDate.value ?: Date(0)),
-            FoodItemKeys.QUANTITY to quantity,
-            FoodItemKeys.STORAGE to storage,
-            FoodItemKeys.TAGS to tags
-        )
-
-        FoodRepository.saveItem(newFoodItem)
+        viewModelScope.launch {
+            val foodItem = FoodItem(
+                name = name,
+                category = category,
+                expiration = expiration,
+                quantity = quantity,
+                storage = storage,
+            )
+            if (id == null) {
+                // Add Mode
+                repository.insertItem(foodItem, tags)
+            } else {
+                // Edit Mode
+                repository.updateItem(foodItem.copy(id = id), tags)
+            }
+        }
+        _foodItem.value = null
+        _expirationDate.value = Date()
         _navigateToHome.value = true
+    }
+
+    fun onDoneToast() {
+        _toastMsg.value = ""
+
     }
 }

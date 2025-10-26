@@ -8,7 +8,7 @@ import com.example.foodsure.data.RoomRepository
 class AppApplication : Application() {
     val database by lazy { AppDatabase.getDatabase(this) }
     val repository: ModelRepository by lazy {
-        RoomRepository(database.foodModelDao())
+        RoomRepository(database, applicationContext)
         /* applicationContext.resources.getBoolean(R.bool.config_use_room_database) could be used
          to determine which repository to use */
     }

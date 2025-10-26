@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_add_foodItem"
             app:destination="@id/nav_add_food" />
+        <action
+            android:id="@+id/action_backup"
+            app:destination="@+id/nav_backup" />
     </fragment>
 
     <fragment
@@ -35,4 +38,10 @@
             android:defaultValue="Add Food"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@id/nav_backup"
+        android:name="com.example.foodsure.ui.backup.BackupFragment"
+        android:label="Backup"
+        tools:layout="@layout/fragment_backup" />
 </navigation>

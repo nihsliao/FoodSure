@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
+import com.example.foodsure.AppApplication
+import com.example.foodsure.data.ModelRepository
 
 abstract class BaseFragment<VB : ViewBinding, VM : ViewModel>() : Fragment() {
+    protected val repository: ModelRepository by lazy { (requireActivity().application as AppApplication).repository }
     private var _binding: VB? = null
 
     // This property is only valid between onCreateView and onDestroyView.

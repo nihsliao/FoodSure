@@ -1,5 +1,5 @@
-# Food Management App for Android  
-A simple food inventory app built with the **MVVM (Model–View–ViewModel)** architecture pattern
+# Food Sure - Store it for sure
+A simple Android food inventory app built with the **MVVM (Model–View–ViewModel)** architecture pattern
 
 ## Feature
 ### Food Record Management

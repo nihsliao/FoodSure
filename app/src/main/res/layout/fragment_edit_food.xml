@@ -53,7 +53,8 @@
                 android:id="@+id/edit_quantity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/edit_form_quantity" />
+                android:hint="@string/edit_form_quantity"
+                android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout

@@ -5,7 +5,7 @@ A simple Android food inventory app built with the **MVVM (Model–View–ViewMo
 ### Food Record Management
 - Record and manage food information using the [**Room**](https://developer.android.com/training/data-storage/room) database
 - Support full CRUD operations:
-  - **Create**, **Update**, **List**, **Delete**, and **Search**
+    - **Create**, **Update**, **List**, **Delete**, and **Search**
 
 ### Backup & Restore
 - **Local Backup**  
@@ -17,7 +17,6 @@ A simple Android food inventory app built with the **MVVM (Model–View–ViewMo
 ## Project Architecture
 This project follows the **MVVM (Model–View–ViewModel)** pattern
 Room entities serve as the core model layer
-
 
 ### Database
 - **FoodModel**: Defines entities, cross-reference tables, and a type converter for `Date` objects
@@ -62,7 +61,7 @@ Room entities serve as the core model layer
             - Swipe to delete triggers `showDeletionDialog`
             - `setUpMenuHost()` forwards search queries to the ViewModel, which updates the `listData` that is observed by **BaseListFragment**
 - Derived Fragments
-    - **HomeFragment**: Displays the  list
+    - **HomeFragment**: Displays the list
     - **TagFragment**: Displays the `FoodTag` list
     - **FoodEditFormFragment**: Add or edit a `FoodItem`
         - Uses an `AutoCompleteTextView` for tag selection and filtering

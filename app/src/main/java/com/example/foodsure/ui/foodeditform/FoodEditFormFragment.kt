@@ -2,13 +2,9 @@ package com.example.foodsure.ui.foodeditform
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.children
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.foodsure.R
@@ -19,8 +15,6 @@ import com.example.foodsure.ui.BaseViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.Date
 
 class FoodEditFormFragment() : BaseFragment<FragmentEditFoodBinding, FoodEditFormViewModel>() {
@@ -62,11 +56,13 @@ class FoodEditFormFragment() : BaseFragment<FragmentEditFoodBinding, FoodEditFor
         binding.editExpirationDate.setOnClickListener { showDatePicker() }
         binding.editButtonSave.setOnClickListener { onSave() }
         setupAutoCompleteAdapter(
-            viewModel.getTags(), binding.editTags,
-            { it.contains(binding.editTags.text.toString().trim()) })
+            binding.editTags,
+            { it.contains(binding.editTags.text.toString().trim(), true) })
 
         if (navigationArgs.foodItemId != -1L) {
             viewModel.loadFoodItem(navigationArgs.foodItemId)
+        } else {
+            viewModel.clearFormState()
         }
     }
 
@@ -96,39 +92,26 @@ class FoodEditFormFragment() : BaseFragment<FragmentEditFoodBinding, FoodEditFor
         )
     }
 
-    private fun <T> setupAutoCompleteAdapter(
-        liveList: LiveData<List<T>>,
+    private fun setupAutoCompleteAdapter(
         view: MaterialAutoCompleteTextView,
-        predicate: (T) -> Boolean
+        predicate: (String) -> Boolean
     ) {
-        val listAdapter = ArrayAdapter(
+        val listAdapter = TagArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            mutableListOf<T>()
+            viewModel.allTags.value?.toMutableList() ?: mutableListOf(),
+            predicate
         )
-
         view.setAdapter(listAdapter)
-        var originalList: List<T> = emptyList()
-        view.doAfterTextChanged { text ->
-            lifecycleScope.launch {
-                delay(300)
-                val filteredList = originalList.filter { predicate(it) }
-                listAdapter.clear()
-                listAdapter.addAll(filteredList)
-                listAdapter.notifyDataSetChanged()
-            }
+
+        viewModel.allTags.observe(viewLifecycleOwner) {
+            listAdapter.updateItemList(it)
         }
+
         view.setOnItemClickListener { adapterView, _, position, _ ->
             val selectedTag = adapterView.getItemAtPosition(position) as String
             addTagToChipGroup(selectedTag)
             view.text = null
-        }
-
-        liveList.observe(viewLifecycleOwner) { list ->
-            originalList = list
-            listAdapter.clear()
-            listAdapter.addAll(list)
-            listAdapter.notifyDataSetChanged()
         }
     }
 

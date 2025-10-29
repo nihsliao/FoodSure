@@ -26,12 +26,13 @@ class FoodEditFormViewModel(r: ModelRepository) : BaseViewModel(r) {
         dateFormat.format(it)
     }
 
-    private val _toastMsg = MutableLiveData<String>("")
+    private val _toastMsg = MutableLiveData("")
     val toastMsg: LiveData<String> = _toastMsg
 
     private val _foodItem by lazy { MutableLiveData<FoodItemWithTags>() }
     val foodItem: LiveData<FoodItemWithTags> = _foodItem
 
+    val allTags = repository.getAllTagsName().asLiveData()
     fun setExpirationDate(date: Date) {
         _expirationDate.value = date
     }
@@ -40,13 +41,14 @@ class FoodEditFormViewModel(r: ModelRepository) : BaseViewModel(r) {
         _toastMsg.value = string
     }
 
+    fun clearFormState() {
+        _foodItem.value = null
+        _expirationDate.value = Date()
+    }
+
     fun onDoneNavigation() {
         _navigateToHome.value = false
         _foodItem.value = null
-    }
-
-    fun getTags(): LiveData<List<String>> {
-        return repository.getAllTagsName().asLiveData()
     }
 
     fun loadFoodItem(id: Long) = viewModelScope.launch {
@@ -89,13 +91,10 @@ class FoodEditFormViewModel(r: ModelRepository) : BaseViewModel(r) {
                 repository.updateItem(foodItem.copy(id = id), tags)
             }
         }
-        _foodItem.value = null
-        _expirationDate.value = Date()
         _navigateToHome.value = true
     }
 
     fun onDoneToast() {
         _toastMsg.value = ""
-
     }
 }
